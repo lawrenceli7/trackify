@@ -1,4 +1,4 @@
-import { users } from "../data/data.js";
+import { users } from "../data/dummy.js";
 
 const userResolver = {
   Query: {
