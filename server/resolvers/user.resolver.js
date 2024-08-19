@@ -5,6 +5,9 @@ const userResolver = {
     users: () => {
       return users;
     },
+    user: (_, { userId }) => {
+      return users.find((user) => user.id === userId);
+    },
   },
   Mutation: {},
 };
