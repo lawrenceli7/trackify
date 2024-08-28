@@ -1,4 +1,4 @@
-import { Avatar, Spin } from "antd";
+import { Avatar, Flex, Spin, Typography } from "antd";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { FaUser } from "react-icons/fa";
@@ -7,6 +7,8 @@ import Cards from "../components/Cards";
 import TransactionForm from "../components/TransactionForm";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+const { Title } = Typography;
 
 const HomePage = () => {
   const chartData = {
@@ -40,31 +42,31 @@ const HomePage = () => {
   const loading = false;
 
   return (
-    <>
-      <div className="relative z-20 flex flex-col items-center justify-center gap-6 mx-auto max-w-7xl">
-        <div className="flex items-center">
-          <p className="relative z-50 inline-block mb-4 mr-4 text-2xl font-bold text-center text-transparent md:text-4xl lg:text-4xl bg-gradient-to-r from-pink-600 via-indigo-500 to-pink-400 bg-clip-text">
-            Spend wisely, track wisely
-          </p>
-          <Avatar icon={<FaUser />} className="bg-[#bfbfbf]" />
-          {!loading && (
-            <MdLogout
-              className="w-5 h-5 mx-2 cursor-pointer"
-              onClick={handleLogout}
-            />
-          )}
-          {loading && <Spin size="large" />}
+    <Flex className="relative z-20 flex flex-col items-center justify-center gap-6 mx-auto max-w-7xl">
+      <Flex className="flex items-center">
+        <Title
+          className="relative z-50 inline-block mb-4 mr-4 text-center"
+          style={{ color: "white" }}
+        >
+          Spend wisely, track wisely
+        </Title>
+        <Avatar icon={<FaUser />} className="bg-[#bfbfbf]" />
+        {!loading && (
+          <MdLogout
+            className="w-5 h-5 mx-2 cursor-pointer"
+            onClick={handleLogout}
+          />
+        )}
+        {loading && <Spin size="large" />}
+      </Flex>
+      <Flex className="flex flex-wrap items-center justify-center w-full gap-6">
+        <div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]  ">
+          <Doughnut data={chartData} />
         </div>
-        <div className="flex flex-wrap items-center justify-center w-full gap-6">
-          <div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]  ">
-            <Doughnut data={chartData} />
-          </div>
-
-          <TransactionForm />
-        </div>
-        <Cards />
-      </div>
-    </>
+        <TransactionForm />
+      </Flex>
+      <Cards />
+    </Flex>
   );
 };
 export default HomePage;

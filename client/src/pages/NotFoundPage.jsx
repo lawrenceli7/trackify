@@ -1,8 +1,10 @@
+import { Flex } from "antd";
+
 const NotFound = () => {
   return (
     <section>
       <div className="text-white ">
-        <div className="flex h-screen">
+        <Flex className="flex h-screen">
           <div className="m-auto text-center">
             <div>
               <img src="/404.svg" alt="404" />
@@ -17,7 +19,7 @@ const NotFound = () => {
               Take me home
             </a>
           </div>
-        </div>
+        </Flex>
       </div>
     </section>
   );
