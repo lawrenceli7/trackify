@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import {
   Button,
   Flex,
@@ -16,6 +17,7 @@ import {
   FaUserLock,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { SIGN_UP } from "../graphql/mutations/user.mutation";
 
 const { Title, Text } = Typography;
 
@@ -26,7 +28,28 @@ const SignUpPage = () => {
     password: "",
     gender: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+
+  const [signup, { loading, error }] = useMutation(SIGN_UP);
+
+  const handleSubmit = async () => {
+    setLoading(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await signup({
+        variables: {
+          input: signUpData,
+        },
+      });
+      message.success("Sign up successful!");
+    } catch (error) {
+      console.log(error);
+      message.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,21 +64,6 @@ const SignUpPage = () => {
       ...prevData,
       gender: e.target.value,
     }));
-  };
-
-  const handleSubmit = async (values) => {
-    setLoading(true);
-    console.log(values);
-
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      message.success("Sign up successful!");
-    } catch (error) {
-      console.log(error);
-      message.error("Sign up failed! Please try again.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleFail = (errorInfo) => {
@@ -73,7 +81,7 @@ const SignUpPage = () => {
             <Text type="secondary" className="block mb-6 text-center">
               Join to keep track of your expenses
             </Text>
-            <Spin spinning={loading} tip="Loading">
+            <Spin spinning={isLoading} tip="Loading">
               <Form
                 layout="vertical"
                 name="basic"
@@ -157,9 +165,10 @@ const SignUpPage = () => {
                     htmlType="submit"
                     className="w-full mt-2"
                     icon={<FaSignInAlt />}
-                    loading={loading}
+                    loading={isLoading}
+                    disabled={loading}
                   >
-                    Sign Up
+                    {loading ? "Loading..." : "Sign Up"}
                   </Button>
                 </Form.Item>
               </Form>

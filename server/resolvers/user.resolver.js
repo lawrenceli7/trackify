@@ -8,11 +8,11 @@ const userResolver = {
       try {
         const { username, name, password, gender } = input;
 
-        if (!usename || !name || !password || !gender) {
+        if (!username || !name || !password || !gender) {
           throw new Error("Please fill all fields.");
         }
 
-        const existingUser = await User.findOne({ usename });
+        const existingUser = await User.findOne({ username });
 
         if (existingUser) {
           throw new Error("User already exists.");
