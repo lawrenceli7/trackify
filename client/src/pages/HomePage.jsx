@@ -1,10 +1,12 @@
-import { Avatar, Flex, Spin, Typography } from "antd";
+import { useMutation } from "@apollo/client";
+import { Avatar, Flex, Spin, Typography, message } from "antd";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import { FaUser } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 import Cards from "../components/Cards";
 import TransactionForm from "../components/TransactionForm";
+import { LOGOUT } from "../graphql/mutations/user.mutation";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -35,11 +37,19 @@ const HomePage = () => {
     ],
   };
 
-  const handleLogout = () => {
-    console.log("Logging out...");
-  };
+  const [logout, { loading }] = useMutation(LOGOUT, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
 
-  const loading = false;
+  const handleLogout = async () => {
+    try {
+      await logout();
+      message.success("Logged out successfully!");
+    } catch (error) {
+      console.log("Log out", error);
+      message.error(error.message);
+    }
+  };
 
   return (
     <Flex className="relative z-20 flex flex-col items-center justify-center gap-6 mx-auto max-w-7xl">

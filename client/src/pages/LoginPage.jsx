@@ -1,7 +1,9 @@
+import { useMutation } from "@apollo/client";
 import { Button, Flex, Form, Input, Spin, Typography, message } from "antd";
 import { useState } from "react";
 import { FaSignInAlt, FaUserCircle, FaUserLock } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { LOGIN } from "../graphql/mutations/user.mutation";
 
 const { Title, Text } = Typography;
 
@@ -10,7 +12,10 @@ const LoginPage = () => {
     username: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
+  const [login, { loading }] = useMutation(LOGIN, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,16 +25,20 @@ const LoginPage = () => {
     }));
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async () => {
     setLoading(true);
-    console.log(values);
 
     try {
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      message.success("Login up successful!");
+      await login({
+        variables: {
+          input: loginData,
+        },
+      });
+      message.success("Login successful!");
     } catch (error) {
-      console.log(error);
-      message.error("Login failed! Please try again.");
+      console.log("Login failed! Please try again.", error);
+      message.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -37,6 +46,7 @@ const LoginPage = () => {
 
   const handleFail = (errorInfo) => {
     console.log("Failed:", errorInfo);
+    message.error(errorInfo);
   };
 
   return (
@@ -50,7 +60,7 @@ const LoginPage = () => {
             <Text type="secondary" className="block mb-6 text-center ">
               Welcome back! Log in to your account
             </Text>
-            <Spin spinning={loading} tip="Loading">
+            <Spin spinning={isLoading} tip="Loading">
               <Form
                 layout="vertical"
                 name="basic"
@@ -99,9 +109,10 @@ const LoginPage = () => {
                   htmlType="submit"
                   className="w-full mt-1"
                   icon={<FaSignInAlt />}
-                  loading={loading}
+                  loading={isLoading}
+                  disabled={loading}
                 >
-                  Login
+                  {loading ? "Loading..." : "Login"}
                 </Button>
               </Form>
             </Spin>

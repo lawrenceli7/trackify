@@ -53,7 +53,6 @@ const TransactionPage = () => {
           name="basic"
           layout="vertical"
           onFinish={handleSubmit}
-          initialValues={formData}
           autoComplete="off"
         >
           <Form.Item
@@ -69,6 +68,7 @@ const TransactionPage = () => {
             <Input
               placeholder="Rent, Groceries, Salary, etc."
               prefix={<FaMoneyBillWave className="text-gray-400" />}
+              value={formData.description}
             />
           </Form.Item>
           <Row gutter={16}>
@@ -80,7 +80,10 @@ const TransactionPage = () => {
                   { required: true, message: "Please select a payment type!" },
                 ]}
               >
-                <Select placeholder="Select Payment Type">
+                <Select
+                  placeholder="Select Payment Type"
+                  value={formData.paymentType}
+                >
                   <Option value="card">
                     <Flex className="flex items-center gap-2">
                       <FaCreditCard className="text-gray-400" />
@@ -104,7 +107,7 @@ const TransactionPage = () => {
                   { required: true, message: "Please select a category!" },
                 ]}
               >
-                <Select placeholder="Select Category">
+                <Select placeholder="Select Category" value={formData.category}>
                   <Option value="saving">
                     <Flex className="flex items-center gap-2">
                       <MdSavings className="text-gray-400" />
@@ -138,6 +141,7 @@ const TransactionPage = () => {
                   type="number"
                   placeholder="100"
                   prefix={<FaCashRegister className="text-gray-400" />}
+                  value={formData.amount}
                 />
               </Form.Item>
             </Col>
@@ -154,6 +158,7 @@ const TransactionPage = () => {
                 <Input
                   placeholder="Enter location..."
                   prefix={<FaMapMarkerAlt className="text-gray-400" />}
+                  value={formData.location}
                 />
               </Form.Item>
             </Col>
@@ -167,6 +172,7 @@ const TransactionPage = () => {
                   className="w-full"
                   placeholder="Select date..."
                   suffixIcon={<FaCalendarAlt className="text-gray-400" />}
+                  value={formData.date}
                 />
               </Form.Item>
             </Col>

@@ -29,8 +29,9 @@ const SignUpPage = () => {
     gender: "",
   });
   const [isLoading, setLoading] = useState(false);
-
-  const [signup, { loading, error }] = useMutation(SIGN_UP);
+  const [signup, { loading }] = useMutation(SIGN_UP, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -68,6 +69,7 @@ const SignUpPage = () => {
 
   const handleFail = (errorInfo) => {
     console.log("Failed:", errorInfo);
+    message.error(errorInfo.message);
   };
 
   return (
