@@ -69,13 +69,13 @@ const SignUpPage = () => {
 
   const handleFail = (errorInfo) => {
     console.log("Failed:", errorInfo);
-    message.error(errorInfo.message);
+    message.error("Please fill in all fields.");
   };
 
   return (
     <Flex className="flex items-center justify-center h-screen">
       <Flex className="z-50 flex overflow-hidden bg-gray-300 rounded-lg shadow-md shadow-[#1677ff]">
-        <Flex className="flex items-center justify-center w-full bg-gray-100 min-w-80 sm:min-w-96 ">
+        <Flex className="flex items-center justify-center w-full bg-gray-100 min-w-80 sm:min-w-96">
           <div className="w-full max-w-md p-6 ">
             <Title level={2} className="text-center">
               Sign Up <span className="text-[#1677ff]">Trackify</span>

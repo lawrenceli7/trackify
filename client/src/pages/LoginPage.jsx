@@ -46,7 +46,7 @@ const LoginPage = () => {
 
   const handleFail = (errorInfo) => {
     console.log("Failed:", errorInfo);
-    message.error(errorInfo);
+    message.error("Please fill in all fields.");
   };
 
   return (
