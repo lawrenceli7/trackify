@@ -8,11 +8,13 @@ import {
   Flex,
   Form,
   Input,
+  message,
   Row,
   Select,
+  Spin,
   Typography,
-  message,
 } from "antd";
+import { useState } from "react";
 import {
   FaCalendarAlt,
   FaCashRegister,
@@ -31,11 +33,13 @@ const { Title, Text } = Typography;
 
 const TransactionForm = () => {
   const [form] = Form.useForm();
+  const [isLoading, setLoading] = useState(false);
   const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION, {
     refetchQueries: ["GetTransactions"],
   });
 
   const handleSubmit = async (values) => {
+    setLoading(true);
     const transactionData = {
       description: values.description,
       paymentType: values.paymentType,
@@ -46,6 +50,7 @@ const TransactionForm = () => {
     };
 
     try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       await createTransaction({
         variables: {
           input: transactionData,
@@ -58,6 +63,8 @@ const TransactionForm = () => {
       console.error("Network Error:", error.networkError);
       console.log("Error details:", error);
       message.error("Failed to create transaction");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,138 +75,143 @@ const TransactionForm = () => {
           Add Transaction
         </Title>
         <Divider />
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Transaction"
-            name="description"
-            rules={[
-              {
-                required: true,
-                message: "Please input the transaction description!",
-              },
-            ]}
+        <Spin spinning={isLoading} tip="Loading">
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            autoComplete="off"
           >
-            <Input
-              placeholder="Rent, Groceries, Salary, etc."
-              prefix={<FaMoneyBillWave className="text-gray-400" />}
-            />
-          </Form.Item>
-          <Row gutter={16}>
-            <Col span={8}>
-              <Form.Item
-                label="Payment Type"
-                name="paymentType"
-                rules={[
-                  { required: true, message: "Please select a payment type!" },
-                ]}
-              >
-                <Select placeholder="Select Payment Type">
-                  <Option value={"card"}>
-                    <Flex className="flex items-center gap-2">
-                      <FaCreditCard className="text-gray-400" />
-                      <Text>Card</Text>
-                    </Flex>
-                  </Option>
-                  <Option value={"cash"}>
-                    <Flex className="flex items-center gap-2">
-                      <FaMoneyBill className="text-gray-400" />
-                      <Text>Cash</Text>
-                    </Flex>
-                  </Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Category"
-                name="category"
-                rules={[
-                  { required: true, message: "Please select a category!" },
-                ]}
-              >
-                <Select placeholder="Select Category">
-                  <Option value={"saving"}>
-                    <Flex className="flex items-center gap-2">
-                      <MdSavings className="text-gray-400" />
-                      <Text>Saving</Text>
-                    </Flex>
-                  </Option>
-                  <Option value={"expense"}>
-                    <Flex className="flex items-center gap-2">
-                      <GiExpense className="text-gray-400" />
-                      <Text>Expense</Text>
-                    </Flex>
-                  </Option>
-                  <Option value={"investment"}>
-                    <Flex className="flex items-center gap-2">
-                      <MdRealEstateAgent className="text-gray-400" />
-                      <Text>Investment</Text>
-                    </Flex>
-                  </Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={8}>
-              <Form.Item
-                label="Amount ($)"
-                name="amount"
-                rules={[
-                  { required: true, message: "Please enter the amount!" },
-                ]}
-              >
-                <Input
-                  type="number"
-                  placeholder="100"
-                  prefix={<FaCashRegister className="text-gray-400" />}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item
-                label="Location"
-                name="location"
-                rules={[
-                  { required: true, message: "Please enter the location!" },
-                ]}
-              >
-                <Input
-                  placeholder="New York"
-                  prefix={<FaMapMarkerAlt className="text-gray-400" />}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Date"
-                name="date"
-                rules={[{ required: true, message: "Please select a date!" }]}
-              >
-                <DatePicker
-                  className="w-full"
-                  suffixIcon={<FaCalendarAlt className="text-gray-400" />}
-                />
-              </Form.Item>
-            </Col>
-          </Row>
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              className="w-full"
-              icon={<IoMdAdd />}
-              disabled={loading}
+            <Form.Item
+              label="Transaction"
+              name="description"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input the transaction description!",
+                },
+              ]}
             >
-              {loading ? "Loading..." : "Add Transaction"}
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input
+                placeholder="Rent, Groceries, Salary, etc."
+                prefix={<FaMoneyBillWave className="text-gray-400" />}
+              />
+            </Form.Item>
+            <Row gutter={16}>
+              <Col span={8}>
+                <Form.Item
+                  label="Payment Type"
+                  name="paymentType"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select a payment type!",
+                    },
+                  ]}
+                >
+                  <Select placeholder="Select Payment Type">
+                    <Option value={"card"}>
+                      <Flex className="flex items-center gap-2">
+                        <FaCreditCard className="text-gray-400" />
+                        <Text>Card</Text>
+                      </Flex>
+                    </Option>
+                    <Option value={"cash"}>
+                      <Flex className="flex items-center gap-2">
+                        <FaMoneyBill className="text-gray-400" />
+                        <Text>Cash</Text>
+                      </Flex>
+                    </Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Category"
+                  name="category"
+                  rules={[
+                    { required: true, message: "Please select a category!" },
+                  ]}
+                >
+                  <Select placeholder="Select Category">
+                    <Option value={"saving"}>
+                      <Flex className="flex items-center gap-2">
+                        <MdSavings className="text-gray-400" />
+                        <Text>Saving</Text>
+                      </Flex>
+                    </Option>
+                    <Option value={"expense"}>
+                      <Flex className="flex items-center gap-2">
+                        <GiExpense className="text-gray-400" />
+                        <Text>Expense</Text>
+                      </Flex>
+                    </Option>
+                    <Option value={"investment"}>
+                      <Flex className="flex items-center gap-2">
+                        <MdRealEstateAgent className="text-gray-400" />
+                        <Text>Investment</Text>
+                      </Flex>
+                    </Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item
+                  label="Amount ($)"
+                  name="amount"
+                  rules={[
+                    { required: true, message: "Please enter the amount!" },
+                  ]}
+                >
+                  <Input
+                    type="number"
+                    placeholder="100"
+                    prefix={<FaCashRegister className="text-gray-400" />}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item
+                  label="Location"
+                  name="location"
+                  rules={[
+                    { required: true, message: "Please enter the location!" },
+                  ]}
+                >
+                  <Input
+                    placeholder="New York"
+                    prefix={<FaMapMarkerAlt className="text-gray-400" />}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  label="Date"
+                  name="date"
+                  rules={[{ required: true, message: "Please select a date!" }]}
+                >
+                  <DatePicker
+                    className="w-full"
+                    suffixIcon={<FaCalendarAlt className="text-gray-400" />}
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="w-full"
+                icon={<IoMdAdd />}
+                disabled={loading}
+              >
+                {loading ? "Loading..." : "Add Transaction"}
+              </Button>
+            </Form.Item>
+          </Form>
+        </Spin>
       </Card>
     </Flex>
   );
