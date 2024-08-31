@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { Avatar, Flex, Spin, Typography, message } from "antd";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
@@ -7,6 +7,7 @@ import { MdLogout } from "react-icons/md";
 import Cards from "../components/Cards";
 import TransactionForm from "../components/TransactionForm";
 import { LOGOUT } from "../graphql/mutations/user.mutation";
+import { GET_TRANSACTION_STATISTICS } from "../graphql/queries/transaction.query";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -37,14 +38,17 @@ const HomePage = () => {
     ],
   };
 
-  const [logout, { loading }] = useMutation(LOGOUT, {
+  const [logout, { loading, client }] = useMutation(LOGOUT, {
     refetchQueries: ["GetAuthenticatedUser"],
   });
+
+  const { data } = useQuery(GET_TRANSACTION_STATISTICS);
 
   const handleLogout = async () => {
     try {
       await logout();
       message.success("Logged out successfully!");
+      client.resetStore();
     } catch (error) {
       console.log("Log out", error);
       message.error(error.message);
