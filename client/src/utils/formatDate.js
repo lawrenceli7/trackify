@@ -1,9 +1,8 @@
-export function formatDate(timestamp) {
-  const date = new Date(parseInt(timestamp));
-  const options = { day: "2-digit", month: "short", year: "numeric" };
-  return date.toLocaleDateString("en-US", options);
-}
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
 
-const timestamp = 1704067200000;
-const formattedDate = formatDate(timestamp);
-console.log(formattedDate);
+dayjs.extend(utc);
+
+export function formatDate(timestamp) {
+  return dayjs.utc(parseInt(timestamp)).format("MMM DD, YYYY");
+}

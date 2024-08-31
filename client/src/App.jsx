@@ -10,8 +10,7 @@ import SignUpPage from "./pages/SignUpPage";
 import TransactionPage from "./pages/TransactionPage";
 
 function App() {
-  const { loading, data, error } = useQuery(GET_AUTHENTICATED_USER);
-  console.log("Error", error);
+  const { loading, data } = useQuery(GET_AUTHENTICATED_USER);
 
   if (loading) return null;
 

@@ -32,6 +32,8 @@ const CardItem = ({ transaction }) => {
   description = description[0]?.toUpperCase() + description.slice(1);
   // eslint-disable-next-line react/prop-types
   category = category[0]?.toUpperCase() + category.slice(1);
+  // eslint-disable-next-line react/prop-types
+  paymentType = paymentType[0]?.toUpperCase() + paymentType.slice(1);
 
   const formattedDate = formatDate(date);
 
@@ -67,7 +69,8 @@ const CardItem = ({ transaction }) => {
                   <Spin />
                 </>
               )}
-              <Link to={`/transaction/123`}>
+              {/* eslint-disable-next-line react/prop-types */}
+              <Link to={`/transaction/${transaction._id}`}>
                 <HiPencilAlt className="cursor-pointer" size={20} />
               </Link>
             </Flex>
