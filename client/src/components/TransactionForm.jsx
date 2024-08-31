@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import {
   Button,
   Card,
@@ -10,6 +11,7 @@ import {
   Row,
   Select,
   Typography,
+  message,
 } from "antd";
 import {
   FaCalendarAlt,
@@ -22,12 +24,16 @@ import {
 import { GiExpense } from "react-icons/gi";
 import { IoMdAdd } from "react-icons/io";
 import { MdRealEstateAgent, MdSavings } from "react-icons/md";
+import { CREATE_TRANSACTION } from "../graphql/mutations/transaction.mutation";
 
 const { Option } = Select;
 const { Title, Text } = Typography;
 
 const TransactionForm = () => {
   const [form] = Form.useForm();
+  const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION, {
+    refetchQueries: ["GetTransactions"],
+  });
 
   const handleSubmit = async (values) => {
     const transactionData = {
@@ -36,9 +42,23 @@ const TransactionForm = () => {
       category: values.category,
       amount: parseFloat(values.amount),
       location: values.location,
-      date: values.date,
+      date: values.date.format("YYYY-MM-DD"),
     };
-    console.log("transactionData", transactionData);
+
+    try {
+      await createTransaction({
+        variables: {
+          input: transactionData,
+        },
+      });
+      form.resetFields();
+      message.success("Transaction added successfully!");
+    } catch (error) {
+      console.error("GraphQL Error:", error.graphQLErrors);
+      console.error("Network Error:", error.networkError);
+      console.log("Error details:", error);
+      message.error("Failed to create transaction");
+    }
   };
 
   return (
@@ -57,12 +77,12 @@ const TransactionForm = () => {
           <Form.Item
             label="Transaction"
             name="description"
-            // rules={[
-            //   {
-            //     required: true,
-            //     message: "Please input the transaction description!",
-            //   },
-            // ]}
+            rules={[
+              {
+                required: true,
+                message: "Please input the transaction description!",
+              },
+            ]}
           >
             <Input
               placeholder="Rent, Groceries, Salary, etc."
@@ -74,18 +94,18 @@ const TransactionForm = () => {
               <Form.Item
                 label="Payment Type"
                 name="paymentType"
-                // rules={[
-                //   { required: true, message: "Please select a payment type!" },
-                // ]}
+                rules={[
+                  { required: true, message: "Please select a payment type!" },
+                ]}
               >
                 <Select placeholder="Select Payment Type">
-                  <Option value="card">
+                  <Option value={"card"}>
                     <Flex className="flex items-center gap-2">
                       <FaCreditCard className="text-gray-400" />
                       <Text>Card</Text>
                     </Flex>
                   </Option>
-                  <Option value="cash">
+                  <Option value={"cash"}>
                     <Flex className="flex items-center gap-2">
                       <FaMoneyBill className="text-gray-400" />
                       <Text>Cash</Text>
@@ -98,24 +118,24 @@ const TransactionForm = () => {
               <Form.Item
                 label="Category"
                 name="category"
-                // rules={[
-                //   { required: true, message: "Please select a category!" },
-                // ]}
+                rules={[
+                  { required: true, message: "Please select a category!" },
+                ]}
               >
                 <Select placeholder="Select Category">
-                  <Option value="saving">
+                  <Option value={"saving"}>
                     <Flex className="flex items-center gap-2">
                       <MdSavings className="text-gray-400" />
                       <Text>Saving</Text>
                     </Flex>
                   </Option>
-                  <Option value="expense">
+                  <Option value={"expense"}>
                     <Flex className="flex items-center gap-2">
                       <GiExpense className="text-gray-400" />
                       <Text>Expense</Text>
                     </Flex>
                   </Option>
-                  <Option value="investment">
+                  <Option value={"investment"}>
                     <Flex className="flex items-center gap-2">
                       <MdRealEstateAgent className="text-gray-400" />
                       <Text>Investment</Text>
@@ -128,9 +148,9 @@ const TransactionForm = () => {
               <Form.Item
                 label="Amount ($)"
                 name="amount"
-                // rules={[
-                //   { required: true, message: "Please enter the amount!" },
-                // ]}
+                rules={[
+                  { required: true, message: "Please enter the amount!" },
+                ]}
               >
                 <Input
                   type="number"
@@ -145,9 +165,9 @@ const TransactionForm = () => {
               <Form.Item
                 label="Location"
                 name="location"
-                // rules={[
-                //   { required: true, message: "Please enter the location!" },
-                // ]}
+                rules={[
+                  { required: true, message: "Please enter the location!" },
+                ]}
               >
                 <Input
                   placeholder="New York"
@@ -159,7 +179,7 @@ const TransactionForm = () => {
               <Form.Item
                 label="Date"
                 name="date"
-                // rules={[{ required: true, message: "Please select a date!" }]}
+                rules={[{ required: true, message: "Please select a date!" }]}
               >
                 <DatePicker
                   className="w-full"
@@ -174,8 +194,9 @@ const TransactionForm = () => {
               htmlType="submit"
               className="w-full"
               icon={<IoMdAdd />}
+              disabled={loading}
             >
-              Add Transaction
+              {loading ? "Loading..." : "Add Transaction"}
             </Button>
           </Form.Item>
         </Form>
