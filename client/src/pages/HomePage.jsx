@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { Avatar, Flex, Spin, Typography, message } from "antd";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
+import { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { FaUser } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
@@ -14,35 +15,63 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 const { Title } = Typography;
 
 const HomePage = () => {
-  const chartData = {
-    labels: ["Saving", "Expense", "Investment"],
+  const { data } = useQuery(GET_TRANSACTION_STATISTICS);
+  const [logout, { loading, client }] = useMutation(LOGOUT, {
+    refetchQueries: ["GetAuthenticatedUser"],
+  });
+
+  const [chartData, setChartData] = useState({
+    labels: [],
     datasets: [
       {
-        label: "%",
-        data: [13, 8, 3],
-        backgroundColor: [
-          "rgba(75, 192, 192)",
-          "rgba(255, 99, 132)",
-          "rgba(54, 162, 235)",
-        ],
-        borderColor: [
-          "rgba(75, 192, 192)",
-          "rgba(255, 99, 132)",
-          "rgba(54, 162, 235, 1)",
-        ],
+        label: "$",
+        data: [],
+        backgroundColor: [],
+        borderColor: [],
         borderWidth: 1,
         borderRadius: 30,
         spacing: 10,
         cutout: 130,
       },
     ],
-  };
-
-  const [logout, { loading, client }] = useMutation(LOGOUT, {
-    refetchQueries: ["GetAuthenticatedUser"],
   });
 
-  const { data } = useQuery(GET_TRANSACTION_STATISTICS);
+  useEffect(() => {
+    if (data?.categoryStatistics) {
+      const categories = data.categoryStatistics.map((stat) => stat.category);
+      const totalAmounts = data.categoryStatistics.map(
+        (stat) => stat.totalAmount
+      );
+
+      const backgroundColors = [];
+      const borderColors = [];
+
+      categories.forEach((category) => {
+        if (category === "saving") {
+          backgroundColors.push("rgba(75, 192, 192)");
+          borderColors.push("rgba(75, 192, 192)");
+        } else if (category === "expense") {
+          backgroundColors.push("rgba(255, 99, 132)");
+          borderColors.push("rgba(255, 99, 132)");
+        } else if (category === "investment") {
+          backgroundColors.push("rgba(54, 162, 235)");
+          borderColors.push("rgba(54, 162, 235)");
+        }
+      });
+
+      setChartData((prev) => ({
+        labels: categories,
+        datasets: [
+          {
+            ...prev.datasets[0],
+            data: totalAmounts,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+          },
+        ],
+      }));
+    }
+  }, [data]);
 
   const handleLogout = async () => {
     try {

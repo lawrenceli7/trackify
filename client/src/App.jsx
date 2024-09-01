@@ -1,5 +1,4 @@
 import { useQuery } from "@apollo/client";
-import { Toaster } from "react-hot-toast";
 import { Navigate, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import { GET_AUTHENTICATED_USER } from "./graphql/queries/user.query";
@@ -38,7 +37,6 @@ function App() {
         />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Toaster />
     </>
   );
 }

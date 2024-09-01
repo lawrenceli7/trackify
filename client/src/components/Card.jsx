@@ -25,7 +25,7 @@ const CardItem = ({ transaction }) => {
 
   const cardClass = categoryColorMap[category];
   const [deleteTransaction, { loading }] = useMutation(DELETE_TRANSACTION, {
-    refetchQueries: ["GetTransactions"],
+    refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
   });
 
   // eslint-disable-next-line react/prop-types
