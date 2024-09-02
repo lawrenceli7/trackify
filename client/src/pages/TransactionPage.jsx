@@ -39,11 +39,12 @@ const { Title, Text } = Typography;
 
 const TransactionPage = () => {
   const { id } = useParams();
+  const [form] = Form.useForm();
 
   const { loading, data } = useQuery(GET_TRANSACTION, {
     variables: { id: id },
   });
-  const [form] = Form.useForm();
+
   const [updateTransaction, { loading: loadingUpdate }] = useMutation(
     UPDATE_TRANSACTION,
     {

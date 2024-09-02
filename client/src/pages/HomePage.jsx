@@ -103,9 +103,11 @@ const HomePage = () => {
         {loading && <Spin size="large" />}
       </Flex>
       <Flex className="flex flex-wrap items-center justify-center w-full gap-6">
-        <div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]  ">
-          <Doughnut data={chartData} />
-        </div>
+        {data?.categoryStatistics.length > 0 && (
+          <div className="h-[330px] w-[330px] md:h-[360px] md:w-[360px]  ">
+            <Doughnut data={chartData} />
+          </div>
+        )}
         <TransactionForm />
       </Flex>
       <Cards />
