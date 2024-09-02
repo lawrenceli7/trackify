@@ -34,6 +34,7 @@ const { Title, Text } = Typography;
 const TransactionForm = () => {
   const [form] = Form.useForm();
   const [isLoading, setLoading] = useState(false);
+
   const [createTransaction, { loading }] = useMutation(CREATE_TRANSACTION, {
     refetchQueries: ["GetTransactions", "GetTransactionStatistics"],
   });

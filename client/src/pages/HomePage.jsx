@@ -16,6 +16,7 @@ const { Title } = Typography;
 
 const HomePage = () => {
   const { data } = useQuery(GET_TRANSACTION_STATISTICS);
+
   const [logout, { loading, client }] = useMutation(LOGOUT, {
     refetchQueries: ["GetAuthenticatedUser"],
   });

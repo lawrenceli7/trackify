@@ -8,11 +8,13 @@ import { LOGIN } from "../graphql/mutations/user.mutation";
 const { Title, Text } = Typography;
 
 const LoginPage = () => {
+  const [isLoading, setLoading] = useState(false);
+
   const [loginData, setLoginData] = useState({
     username: "",
     password: "",
   });
-  const [isLoading, setLoading] = useState(false);
+
   const [login, { loading }] = useMutation(LOGIN, {
     refetchQueries: ["GetAuthenticatedUser"],
   });

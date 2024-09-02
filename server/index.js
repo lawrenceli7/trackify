@@ -10,6 +10,7 @@ import { buildContext } from "graphql-passport";
 import http from "http";
 import passport from "passport";
 import path from "path";
+import job from "./cron.js";
 import { connectDB } from "./db/connectDB.js";
 import { configurePassport } from "./passport/passport.config.js";
 import mergedResolvers from "./resolvers/index.js";
@@ -17,6 +18,7 @@ import mergedTypeDefs from "./typeDefs/index.js";
 
 dotenv.config();
 configurePassport();
+job.start();
 
 const __dirname = path.resolve();
 const app = express();

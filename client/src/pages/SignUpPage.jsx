@@ -28,6 +28,7 @@ const SignUpPage = () => {
     password: "",
     gender: "",
   });
+
   const [isLoading, setLoading] = useState(false);
   const [signup, { loading }] = useMutation(SIGN_UP, {
     refetchQueries: ["GetAuthenticatedUser"],
